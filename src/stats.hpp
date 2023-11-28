@@ -10,4 +10,8 @@ void close_stats(void);									//stores the best values for each run
 void get_mean(int r, double value);						//stores the observation from each run
 void free_stats();										//free memory
 
+void open_stats_for_evolution(void); // used to output the statistical information for each generation
+void flush_row_into_file(const char* row);
+void close_stats_for_evolution(void);
+
 #endif //EVRP_STATS_HPP

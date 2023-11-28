@@ -26,7 +26,7 @@ struct solution{
 extern solution *best_sol;
 
 void initialize_heuristic();
-void run_heuristic();
+void run_heuristic(int run);
 void free_heuristic();
 
 void rvnd(vector<int> &tour, bool merge, bool firstImprove, vector<FunptrOperator> neighborhoods);

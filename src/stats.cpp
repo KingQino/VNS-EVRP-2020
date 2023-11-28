@@ -130,6 +130,41 @@ void close_stats(void){
 }
 
 
+const char* STATS_PATH = "../stats/";
+
+// customized variables
+FILE *log_evolution_details;
+char *evolution_filename;
+
+// customized functions
+void open_stats_for_evolution(void) {
+    //initialize and open output files
+    evolution_filename = new char [CHAR_LEN];
+    snprintf(evolution_filename, CHAR_LEN, "%sevols.%s.csv", STATS_PATH, problem_instance);
+
+    //for evolutionary details for each generation
+    if ((log_evolution_details = fopen(evolution_filename, "a")) == nullptr) {
+        cout << "Failed to open stats file " << evolution_filename << endl;
+        exit(2);
+    }
+    else {
+        fprintf(log_evolution_details, "iterations,vns_cnt,current_best,global_best,evaluations,progress,time(microseconds)\n");
+    }
+    //initialize and open output files
+}
+
+void flush_row_into_file(const char* row) {
+    fprintf(log_evolution_details, "%s\n", row);
+}
+
+
+
+void close_stats_for_evolution(void) {
+
+    fclose(log_evolution_details);
+
+}
+
 void free_stats(){
 
   //free memory

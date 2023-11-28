@@ -17,6 +17,10 @@ void start_run(int r) {
     init_evals();
     init_current_best();
     cout << "Run: " << r << " with random seed " << r << endl;
+
+    if (r == 1) {
+        open_stats_for_evolution();
+    }
 }
 
 /*gets an observation of the run for your heuristic*/
@@ -26,6 +30,11 @@ void end_run(int r) {
     cout << "End of run " << r << " with best solution quality " << get_current_best() << " total evaluations: "
          << get_evals() << endl;
     cout << " " << endl;
+
+    if (r == 1) {
+        close_stats_for_evolution();
+        cout << endl;
+    }
 }
 
 /*sets the termination conidition for your heuristic*/
@@ -60,7 +69,7 @@ int main(int argc, char *argv[]) {
         initialize_heuristic(); //heuristic.h
 
 /*Step 4*/
-            run_heuristic();  //heuristic.h
+            run_heuristic(run);  //heuristic.h
 
 // print_solution(best_sol->tour,best_sol->steps);
 // check_solution(best_sol->tour,best_sol->steps);

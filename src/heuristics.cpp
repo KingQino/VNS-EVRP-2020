@@ -1,16 +1,22 @@
 #include<iostream>
 #include<limits.h>
+#include <chrono>
+#include <vector>
+#include <algorithm>
 
 #include "heuristics.hpp"
 #include "EVRP.hpp"
 #include "utils.hpp"
 #include "perturbations.hpp"
 #include "constructions.hpp"
+#include "stats.hpp"
 
 using namespace std;
 
 
 solution *best_sol;   //see heuristic.hpp for the solution structure
+
+int _run;
 
 /*initialize the structure of your heuristic in this function*/
 void initialize_heuristic(){
@@ -23,7 +29,8 @@ void initialize_heuristic(){
 }
 
 /*implement your heuristic in this function*/
-void run_heuristic(){
+void run_heuristic(int run){
+    _run = run;
     initMyStructures();
 
     auto construction = initDbcaClarkeZga;
@@ -102,6 +109,8 @@ ms_vns(bool merge, bool firstImprove, int p, double restart_ratio, vector<Funptr
     double very_best_score;
     // cout << "vns_restarts: " << vns_restarts << endl;
 
+    int iters = 0; // Yinghao
+    auto start_time = std::chrono::high_resolution_clock::now(); //Yinghao
     // Outer loop
     while (get_evals() < STOP_CNT) {
         auto best = construction();
@@ -112,6 +121,7 @@ ms_vns(bool merge, bool firstImprove, int p, double restart_ratio, vector<Funptr
             very_best_score = best_score;
         }
 
+        iters++; // Yinghao
         // Attempt at most vns_restarts iters. of VNS
         while (vns_cnt < vns_restarts && get_evals() < STOP_CNT) {
             auto current = best;
@@ -132,6 +142,35 @@ ms_vns(bool merge, bool firstImprove, int p, double restart_ratio, vector<Funptr
                 vns_cnt++;
             }
         }
+
+        // **********Yinghao************
+        double evals_used = get_evals();
+        double stop_criterion = TERMINATION;
+        double evals_progress = evals_used / stop_criterion;
+        if (_run == 1) {
+            auto end_time = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
+//            int hours = duration / 3600;
+//            int minutes = (duration % 3600) / 60;
+//            int seconds = duration % 60;
+
+            char* row;
+            row = new char[CHAR_LEN*2];
+            snprintf(row, CHAR_LEN*2, "%d,%d,%.3f,%.3f,%.2f,%.3f,%.1lld",
+                     iters,
+                     vns_cnt,
+                     best_score,
+                     very_best_score,
+                     evals_used,
+                     evals_progress,
+                     duration
+            );
+
+            flush_row_into_file(row);
+            delete[] row;
+        }
+        // **********Yinghao************
+
         // Update very best before VNS restart
         if (get_evals() < STOP_CNT) cout << "VNS full restart\n";
         // cout << "vns_cnt: " << vns_cnt << endl;
