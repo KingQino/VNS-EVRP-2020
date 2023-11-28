@@ -149,21 +149,23 @@ ms_vns(bool merge, bool firstImprove, int p, double restart_ratio, vector<Funptr
         double evals_progress = evals_used / stop_criterion;
         if (_run == 1) {
             auto end_time = std::chrono::high_resolution_clock::now();
-            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
-//            int hours = duration / 3600;
-//            int minutes = (duration % 3600) / 60;
-//            int seconds = duration % 60;
+            auto duration = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count();
+            int hours = duration / 3600;
+            int minutes = (duration % 3600) / 60;
+            int seconds = duration % 60;
 
             char* row;
             row = new char[CHAR_LEN*2];
-            snprintf(row, CHAR_LEN*2, "%d,%d,%.3f,%.3f,%.2f,%.3f,%.1lld",
+            snprintf(row, CHAR_LEN*2, "%d,%d,%.3f,%.3f,%.2f,%.3f,%d,%d,%d",
                      iters,
                      vns_cnt,
                      best_score,
                      very_best_score,
                      evals_used,
                      evals_progress,
-                     duration
+                     hours,
+                     minutes,
+                     seconds
             );
 
             flush_row_into_file(row);
