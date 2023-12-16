@@ -111,8 +111,11 @@ ms_vns(bool merge, bool firstImprove, int p, double restart_ratio, vector<Funptr
 
     int iters = 0; // Yinghao
     auto start_time = std::chrono::high_resolution_clock::now(); //Yinghao
-    // Outer loop
-    while (get_evals() < STOP_CNT) {
+    auto end_time = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count();
+    // Outer loop - TODO: change the termination condition
+    while (duration < MAX_EXEC_TIME) {
+//    while (get_evals() < STOP_CNT) {
         auto best = construction();
 
         double best_score = fitness_evaluation(best);
@@ -123,15 +126,16 @@ ms_vns(bool merge, bool firstImprove, int p, double restart_ratio, vector<Funptr
 
         iters++; // Yinghao
         // Attempt at most vns_restarts iters. of VNS
-        while (vns_cnt < vns_restarts && get_evals() < STOP_CNT) {
+        while (vns_cnt < vns_restarts && duration < MAX_EXEC_TIME) {
+//        while (vns_cnt < vns_restarts && get_evals() < STOP_CNT) {
             auto current = best;
             generalizedDoubleBridge(current, p);
             localSearch(current, merge, firstImprove, neighborhoods);
             double current_score = fitness_evaluation(current);
 
-            double a = get_evals();
-            double b = TERMINATION;
-            cout << "Non-improving VNS cnt: " << vns_cnt << ", current: " << current_score << ", best: " << best_score << ", very best: " << very_best_score << ", progress: " << a/b << endl;
+//            double a = get_evals();
+//            double b = TERMINATION;
+//            cout << "Non-improving VNS cnt: " << vns_cnt << ", current: " << current_score << ", best: " << best_score << ", very best: " << very_best_score << ", progress: " << a/b << endl;
 
 
             if (current_score < best_score) {
@@ -148,24 +152,22 @@ ms_vns(bool merge, bool firstImprove, int p, double restart_ratio, vector<Funptr
         double stop_criterion = TERMINATION;
         double evals_progress = evals_used / stop_criterion;
         if (_run == 1) {
-            auto end_time = std::chrono::high_resolution_clock::now();
-            auto duration = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count();
-            int hours = duration / 3600;
-            int minutes = (duration % 3600) / 60;
-            int seconds = duration % 60;
+            end_time = std::chrono::high_resolution_clock::now();
+            duration = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count();
+//            int hours = duration / 3600;
+//            int minutes = (duration % 3600) / 60;
+//            int seconds = duration % 60;
 
             char* row;
             row = new char[CHAR_LEN*2];
-            snprintf(row, CHAR_LEN*2, "%d,%d,%.3f,%.3f,%.2f,%.3f,%d,%d,%d",
+            snprintf(row, CHAR_LEN*2, "%d,%d,%.3f,%.3f,%.2f,%.3f,%.6lld",
                      iters,
                      vns_cnt,
                      best_score,
                      very_best_score,
                      evals_used,
                      evals_progress,
-                     hours,
-                     minutes,
-                     seconds
+                     duration
             );
 
             flush_row_into_file(row);

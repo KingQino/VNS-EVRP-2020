@@ -2,7 +2,7 @@
 #define EVRP_STATS_HPP
 
 
-#define MAX_TRIALS 	20 									//DO NOT CHANGE THE NUMBER
+#define MAX_TRIALS 	1 									//DO NOT CHANGE THE NUMBER
 #define CHAR_LEN 100
 
 void open_stats(void);									//creates the output file

@@ -23,6 +23,8 @@ struct node {
   double y;
 };
 
+extern int MAX_EXEC_TIME; // Another stop criteria - seconds by Yinghao
+
 
 //PARAMETERS THAT CAN BE USED IN YOUR ALGORITHM IMPLEMENTATION
 extern int NUM_OF_CUSTOMERS;			//number of customer set

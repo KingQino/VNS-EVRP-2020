@@ -148,7 +148,7 @@ void open_stats_for_evolution(void) {
         exit(2);
     }
     else {
-        fprintf(log_evolution_details, "iterations,vns_cnt,current_best,global_best,evaluations,progress,hours,minutes,seconds\n");
+        fprintf(log_evolution_details, "iterations,vns_cnt,current_best,global_best,evaluations,progress,duration\n");
     }
     //initialize and open output files
 }

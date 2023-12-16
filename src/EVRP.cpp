@@ -38,6 +38,8 @@ floydWarshall fw;
 double evals;
 double current_best;
 
+int MAX_EXEC_TIME; // unit seconds
+
 /****************************************************************/
 /*Compute and return the euclidean distance of two objects      */
 /****************************************************************/
@@ -193,6 +195,13 @@ void read_problem(char *filename) {
         exit(1);
     } else {
         compute_distances();
+        if (NUM_OF_CUSTOMERS <= 100) {
+            MAX_EXEC_TIME = int (1 * (ACTUAL_PROBLEM_SIZE / 100.0) * 60 * 60);
+        } else if (NUM_OF_CUSTOMERS <= 915) {
+            MAX_EXEC_TIME = int (2 * (ACTUAL_PROBLEM_SIZE / 100.0) * 60 * 60);
+        } else {
+            MAX_EXEC_TIME = int (3 * (ACTUAL_PROBLEM_SIZE / 100.0) * 60 * 60);
+        }
     }
 
 }
