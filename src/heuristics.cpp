@@ -46,7 +46,8 @@ void run_heuristic(int run){
     bool merge = true;
     bool firstImprove = false;
     int p = 2;
-    double restart_ratio = 0.35;
+//    double restart_ratio = 0.35; // TODO: hyper-parameter modification
+    double restart_ratio = 1.0;
 
     auto evrpTour = ms_vns(merge, firstImprove, p, restart_ratio, selectedOperators, construction, rvnd);
 
