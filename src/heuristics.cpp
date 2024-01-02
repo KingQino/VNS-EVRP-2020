@@ -46,8 +46,8 @@ void run_heuristic(int run){
     bool merge = true;
     bool firstImprove = false;
     int p = 2;
-//    double restart_ratio = 0.35; // TODO: hyper-parameter modification
-    double restart_ratio = 1.0;
+    double restart_ratio = 0.35; // TODO: hyper-parameter modification
+//    double restart_ratio = 1.0;
 
     auto evrpTour = ms_vns(merge, firstImprove, p, restart_ratio, selectedOperators, construction, rvnd);
 
@@ -89,8 +89,8 @@ void rvnd(vector<int> &tour, bool merge, bool firstImprove, vector<FunptrOperato
             if (merge) {
                 mergeAFSs(tour);
             }
-            double a = get_evals();
-            double b = TERMINATION;
+//            double a = get_evals();
+//            double b = TERMINATION;
             // cout << "RVND iter: " << ++i << ", evals: " << get_evals() << ", fitness: " << fitness_evaluation(tour) << ", progress: " << a/b << endl;
         } else {
             // If not success, then make the current neighborhood unavailable and decrease nlSize
@@ -127,8 +127,8 @@ ms_vns(bool merge, bool firstImprove, int p, double restart_ratio, vector<Funptr
 
         iters++; // Yinghao
         // Attempt at most vns_restarts iters. of VNS
-        while (vns_cnt < vns_restarts && duration < MAX_EXEC_TIME) {
-//        while (vns_cnt < vns_restarts && get_evals() < STOP_CNT) {
+//        while (vns_cnt < vns_restarts && duration < MAX_EXEC_TIME) {
+        while (vns_cnt < vns_restarts && get_evals() < STOP_CNT) {
             auto current = best;
             generalizedDoubleBridge(current, p);
             localSearch(current, merge, firstImprove, neighborhoods);
@@ -155,9 +155,6 @@ ms_vns(bool merge, bool firstImprove, int p, double restart_ratio, vector<Funptr
         if (_run == 1) {
             end_time = std::chrono::high_resolution_clock::now();
             duration = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count();
-//            int hours = duration / 3600;
-//            int minutes = (duration % 3600) / 60;
-//            int seconds = duration % 60;
 
             char* row;
             row = new char[CHAR_LEN*2];
