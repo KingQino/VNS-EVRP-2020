@@ -130,7 +130,7 @@ void close_stats(void){
 }
 
 
-const char* STATS_PATH = "../stats/para-vns-restarts/";
+const char* STATS_PATH = "../stats/";
 
 // customized variables
 FILE *log_evolution_details;
