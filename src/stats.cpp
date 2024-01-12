@@ -4,6 +4,8 @@
 #include<string>
 #include<cstring>
 #include <iostream>
+#include <algorithm>
+
 
 #include "EVRP.hpp"
 #include "stats.hpp"
