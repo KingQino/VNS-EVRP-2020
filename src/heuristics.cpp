@@ -1,8 +1,12 @@
 #include<iostream>
 #include<limits.h>
-#include <chrono>
+#include <fstream>
 #include <vector>
+#include <iomanip>
+#include <sstream>
+#include <ostream>
 #include <algorithm>
+
 
 #include "heuristics.hpp"
 #include "EVRP.hpp"
@@ -11,12 +15,16 @@
 #include "constructions.hpp"
 #include "stats.hpp"
 
+
 using namespace std;
 
+int SEED;
+std::ofstream logEvolution;
+std::ofstream logSolution;
+std::chrono::time_point<std::chrono::high_resolution_clock> staTime;
+std::chrono::time_point<std::chrono::high_resolution_clock> endTime;
 
 solution *best_sol;   //see heuristic.hpp for the solution structure
-
-int _run;
 
 /*initialize the structure of your heuristic in this function*/
 void initialize_heuristic(){
@@ -26,11 +34,26 @@ void initialize_heuristic(){
     best_sol->id = 1;
     best_sol->steps = 0;
     best_sol->tour_length = INT_MAX;
+
+    // open evolution log
+    std::string instanceName(problem_instance);
+    string instancePrefix = instanceName.substr(0, instanceName.find_last_of('.'));
+    string directoryPath = StatsInterface::statsPath+ "/" + instancePrefix  + "/" + to_string(SEED);
+    StatsInterface::create_directories_if_not_exists(directoryPath);
+    string evFileName = "evolution." + to_string(SEED) + "." + instancePrefix  + ".csv";
+    logEvolution.open(directoryPath + "/" + evFileName);
+
+//    fprintf(log_evolution_details, "iterations,vns_cnt,current_best,global_best,evaluations,progress,duration\n");
+
+    // open solution log
+    string soFileName = "solution." + to_string(SEED) + "." + instancePrefix + ".txt";
+    logSolution.open(directoryPath + "/" + soFileName);
+
+    staTime = std::chrono::high_resolution_clock::now();
 }
 
 /*implement your heuristic in this function*/
-void run_heuristic(int run){
-    _run = run;
+void run_heuristic(){
     initMyStructures();
 
     auto construction = initDbcaClarkeZga;
@@ -46,8 +69,7 @@ void run_heuristic(int run){
     bool merge = true;
     bool firstImprove = false;
     int p = 2;
-    double restart_ratio = 0.35; // TODO: hyper-parameter modification
-//    double restart_ratio = 1.0;
+    double restart_ratio = 0.35;
 
     auto evrpTour = ms_vns(merge, firstImprove, p, restart_ratio, selectedOperators, construction, rvnd);
 
@@ -59,12 +81,20 @@ void run_heuristic(int run){
     }
     best_sol->steps = evrpTour.size();
     best_sol->tour_length = fitness_evaluation(evrpTour);
+
+    logSolution << fixed << setprecision(8) << best_sol->tour_length << endl;
+    for (int i = 0; i < best_sol->steps; ++i) {
+        logSolution << best_sol->tour[i] << ",";
+    }
+    logSolution << endl;
 }
 
 /*free memory structures*/
 void free_heuristic(){
 
   delete[] best_sol->tour;
+  logEvolution.close();
+  logSolution.close();
 
 }
 
@@ -89,8 +119,8 @@ void rvnd(vector<int> &tour, bool merge, bool firstImprove, vector<FunptrOperato
             if (merge) {
                 mergeAFSs(tour);
             }
-//            double a = get_evals();
-//            double b = TERMINATION;
+            double a = get_evals();
+            double b = TERMINATION;
             // cout << "RVND iter: " << ++i << ", evals: " << get_evals() << ", fitness: " << fitness_evaluation(tour) << ", progress: " << a/b << endl;
         } else {
             // If not success, then make the current neighborhood unavailable and decrease nlSize
@@ -110,12 +140,10 @@ ms_vns(bool merge, bool firstImprove, int p, double restart_ratio, vector<Funptr
     double very_best_score;
     // cout << "vns_restarts: " << vns_restarts << endl;
 
-    int iters = 0; // Yinghao
-    auto start_time = std::chrono::high_resolution_clock::now(); //Yinghao
-    auto end_time = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count();
-    // Outer loop - TODO: change the termination condition
-    while (duration < MAX_EXEC_TIME) {
+    long timeused = 0; // Yinghao
+
+    // Outer loop
+    while (timeused < MAX_EXEC_TIME) {
 //    while (get_evals() < STOP_CNT) {
         auto best = construction();
 
@@ -125,18 +153,17 @@ ms_vns(bool merge, bool firstImprove, int p, double restart_ratio, vector<Funptr
             very_best_score = best_score;
         }
 
-        iters++; // Yinghao
         // Attempt at most vns_restarts iters. of VNS
-//        while (vns_cnt < vns_restarts && duration < MAX_EXEC_TIME) {
         while (vns_cnt < vns_restarts && get_evals() < STOP_CNT) {
+//        while (vns_cnt < vns_restarts && get_evals() < STOP_CNT) {
             auto current = best;
             generalizedDoubleBridge(current, p);
             localSearch(current, merge, firstImprove, neighborhoods);
             double current_score = fitness_evaluation(current);
 
-//            double a = get_evals();
-//            double b = TERMINATION;
-//            cout << "Non-improving VNS cnt: " << vns_cnt << ", current: " << current_score << ", best: " << best_score << ", very best: " << very_best_score << ", progress: " << a/b << endl;
+            double a = get_evals();
+            double b = TERMINATION;
+            cout << "Non-improving VNS cnt: " << vns_cnt << ", current: " << current_score << ", best: " << best_score << ", very best: " << very_best_score << ", progress: " << a/b << endl;
 
 
             if (current_score < best_score) {
@@ -147,32 +174,6 @@ ms_vns(bool merge, bool firstImprove, int p, double restart_ratio, vector<Funptr
                 vns_cnt++;
             }
         }
-
-        // **********Yinghao************
-        double evals_used = get_evals();
-        double stop_criterion = TERMINATION;
-        double evals_progress = evals_used / stop_criterion;
-        if (_run == 1) {
-            end_time = std::chrono::high_resolution_clock::now();
-            duration = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count();
-
-            char* row;
-            row = new char[CHAR_LEN*2];
-            snprintf(row, CHAR_LEN*2, "%d,%d,%.3f,%.3f,%.2f,%.3f,%.6lld",
-                     iters,
-                     vns_cnt,
-                     best_score,
-                     very_best_score,
-                     evals_used,
-                     evals_progress,
-                     duration
-            );
-
-            flush_row_into_file(row);
-            delete[] row;
-        }
-        // **********Yinghao************
-
         // Update very best before VNS restart
         if (get_evals() < STOP_CNT) cout << "VNS full restart\n";
         // cout << "vns_cnt: " << vns_cnt << endl;
@@ -181,6 +182,11 @@ ms_vns(bool merge, bool firstImprove, int p, double restart_ratio, vector<Funptr
             very_best = best;
             very_best_score = best_score;
         }
+
+
+        endTime = std::chrono::high_resolution_clock::now();
+        timeused = std::chrono::duration_cast<std::chrono::seconds>(endTime - staTime).count();
+        logEvolution << best_score << "," << very_best_score << "," << timeused << "," << get_evals() << endl;
     }
 
     return very_best;

@@ -16,25 +16,17 @@ void start_run(int r) {
     srand(r); //random seed
     init_evals();
     init_current_best();
+    SEED = r;
     cout << "Run: " << r << " with random seed " << r << endl;
-
-    if (r == 1) {
-        open_stats_for_evolution();
-    }
 }
 
 /*gets an observation of the run for your heuristic*/
 void end_run(int r) {
 
-    get_mean(r - 1, get_current_best()); //from stats.h
+//    get_mean(r - 1, get_current_best()); //from stats.h
     cout << "End of run " << r << " with best solution quality " << get_current_best() << " total evaluations: "
          << get_evals() << endl;
     cout << " " << endl;
-
-    if (r == 1) {
-        close_stats_for_evolution();
-        cout << endl;
-    }
 }
 
 /*sets the termination conidition for your heuristic*/
@@ -55,33 +47,27 @@ bool termination_condition(void) {
 /****************************************************************/
 int main(int argc, char *argv[]) {
     int run;
-/*Step 1*/
+    if (argc < 3) {
+        std::cerr << "Usage: " << argv[0] << " <problem_instance_filename> <seed>\n";
+        return 1; // Exit with an error code
+    }
+
+    std::string instanceName(argv[1]);
+    run = std::stoi(argv[2]);
+
     problem_instance = argv[1];       //pass the .evrp filename as an argument
     read_problem(problem_instance);   //Read EVRP from file from EVRP.h
 
-/*Step 2*/
-    open_stats();//open text files to store the best values from the 20 runs stats.h
 
-    for (run = 1; run <= MAX_TRIALS; run++) {
-/*Step 3*/
-        start_run(run);
-//Initialize your heuristic here
-        initialize_heuristic(); //heuristic.h
+    string instancePrefix = instanceName.substr(0, instanceName.find_last_of('.'));
+    string directoryPath = StatsInterface::statsPath+ "/" + instancePrefix  + "/" + to_string(run);
 
-/*Step 4*/
-            run_heuristic(run);  //heuristic.h
-
-// print_solution(best_sol->tour,best_sol->steps);
-// check_solution(best_sol->tour,best_sol->steps);
-
-/*Step 5*/
-        end_run(run);  //store the best solution quality for each run
-    }
-/*Step 6*/
-    close_stats(); //close text files to calculate the mean result from the 20 runs stats.h
+    start_run(run);
+    initialize_heuristic(); //heuristic.h
+    run_heuristic();  //heuristic.h
+    end_run(run);  //store the best solution quality for each run
 
 
-//free memory
     free_stats();
     free_heuristic();
     free_EVRP();

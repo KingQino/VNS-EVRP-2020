@@ -2,6 +2,7 @@
 #define EVRP_HEURISTICS_HPP
 
 #include <vector>
+#include <chrono>
 #include "LS_operators.hpp"
 #include "EVRP.hpp"
 
@@ -26,12 +27,16 @@ struct solution{
 extern solution *best_sol;
 
 void initialize_heuristic();
-void run_heuristic(int run);
+void run_heuristic();
 void free_heuristic();
 
 void rvnd(vector<int> &tour, bool merge, bool firstImprove, vector<FunptrOperator> neighborhoods);
 vector<int> ms_vns(bool merge, bool firstImprove, int p, double restart_ratio, vector<FunptrOperator> neighborhoods, vector<int>(*construction)(), void(*localSearch)(vector<int> &, bool, bool, vector<FunptrOperator>));
 
-
+extern int SEED;
+extern std::ofstream logEvolution;
+extern std::ofstream logSolution;
+extern std::chrono::time_point<std::chrono::high_resolution_clock> staTime;
+extern std::chrono::time_point<std::chrono::high_resolution_clock> endTime;
 
 #endif //EVRP_HEURISTICS_HPP

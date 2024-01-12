@@ -11,6 +11,8 @@
 #define TERMINATION 25000*ACTUAL_PROBLEM_SIZE  	//DO NOT CHANGE THE NUMBER
 #define STOP_CNT 25000*ACTUAL_PROBLEM_SIZE - 5
 
+extern int MAX_EXEC_TIME; // Yinghao
+
 using namespace std;
 
 extern char* problem_instance;          //Name of the instance
@@ -22,8 +24,6 @@ struct node {
   double x;
   double y;
 };
-
-extern int MAX_EXEC_TIME; // Another stop criteria - seconds by Yinghao
 
 
 //PARAMETERS THAT CAN BE USED IN YOUR ALGORITHM IMPLEMENTATION

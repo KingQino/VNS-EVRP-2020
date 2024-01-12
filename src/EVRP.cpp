@@ -14,6 +14,8 @@
 
 using namespace std;
 
+int MAX_EXEC_TIME; // unit seconds
+
 char *problem_instance;          //Name of the instance
 struct node *node_list;     //List of nodes with id and x and y coordinates
 int *cust_demand;                //List with id and customer demands
@@ -37,8 +39,6 @@ floydWarshall fw;
 
 double evals;
 double current_best;
-
-int MAX_EXEC_TIME; // unit seconds
 
 /****************************************************************/
 /*Compute and return the euclidean distance of two objects      */
@@ -196,11 +196,11 @@ void read_problem(char *filename) {
     } else {
         compute_distances();
         if (NUM_OF_CUSTOMERS <= 100) {
-            MAX_EXEC_TIME = int (1 * (ACTUAL_PROBLEM_SIZE / 100.0) * 60 * 60);
+            MAX_EXEC_TIME = 1 * ACTUAL_PROBLEM_SIZE * 36;
         } else if (NUM_OF_CUSTOMERS <= 915) {
-            MAX_EXEC_TIME = int (2 * (ACTUAL_PROBLEM_SIZE / 100.0) * 60 * 60);
+            MAX_EXEC_TIME = 2 * ACTUAL_PROBLEM_SIZE * 36;
         } else {
-            MAX_EXEC_TIME = int (3 * (ACTUAL_PROBLEM_SIZE / 100.0) * 60 * 60);
+            MAX_EXEC_TIME = 3 * ACTUAL_PROBLEM_SIZE * 36;
         }
     }
 
@@ -455,7 +455,11 @@ bool full_validity_check(vector<int> &tour) {
     auto test1 = isValidTour(tour);
     cout << "My test: " << test1 << endl;
 
-    initialize_heuristic();
+    best_sol = new solution;
+    best_sol->tour = new int[4*NUM_OF_CUSTOMERS];
+    best_sol->id = 1;
+    best_sol->steps = 0;
+    best_sol->tour_length = INT_MAX;
     for (int i = 0; i < tour.size(); i++) {
         best_sol->tour[i] = tour[i];
     }
