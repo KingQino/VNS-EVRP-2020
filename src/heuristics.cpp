@@ -42,6 +42,7 @@ void initialize_heuristic(){
     StatsInterface::create_directories_if_not_exists(directoryPath);
     string evFileName = "evolution." + to_string(SEED) + "." + instancePrefix  + ".csv";
     logEvolution.open(directoryPath + "/" + evFileName);
+    logEvolution << "best" << "," << "global_best" << "," << "duration" << "," << "evals" << endl;
 
 //    fprintf(log_evolution_details, "iterations,vns_cnt,current_best,global_best,evaluations,progress,duration\n");
 
