@@ -114,6 +114,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    string statsFileName = directoryPrefix + "stats." + instancePrefix + ".txt";
     StatsInterface::stats_for_multiple_trials(directoryPrefix, data);
 
 
