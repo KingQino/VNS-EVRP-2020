@@ -155,7 +155,7 @@ ms_vns(bool merge, bool firstImprove, int p, double restart_ratio, vector<Funptr
         }
 
         // Attempt at most vns_restarts iters. of VNS
-        while (vns_cnt < vns_restarts && get_evals() < STOP_CNT) {
+        while (vns_cnt < 20*n && (double)timeused < (MAX_EXEC_TIME * 0.05)) {
 //        while (vns_cnt < vns_restarts && get_evals() < STOP_CNT) {
             auto current = best;
             generalizedDoubleBridge(current, p);
