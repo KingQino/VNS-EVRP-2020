@@ -13,3 +13,6 @@ cd ../data
 ../build/EVRP E-n22-k4.evrp
 ```
 
+
+
+> The main changes made by me is on statistical function!
