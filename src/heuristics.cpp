@@ -169,6 +169,11 @@ ms_vns(bool merge, bool firstImprove, int p, double restart_ratio, vector<Funptr
                 vns_cnt = 0;
                 best = current;
                 best_score = current_score;
+                if (best_score < very_best_score) {
+                    very_best_score = best_score;
+                    timeused = std::chrono::high_resolution_clock::now() - staTime;
+                    logEvolution << fixed << setprecision(2) << very_best_score << "," << get_evals() << "," << timeused.count() << endl;
+                }
             } else {
                 vns_cnt++;
             }
@@ -186,6 +191,9 @@ ms_vns(bool merge, bool firstImprove, int p, double restart_ratio, vector<Funptr
         timeused = std::chrono::high_resolution_clock::now() - staTime;
         logEvolution << fixed << setprecision(2) << very_best_score << "," << get_evals() << "," << timeused.count() << endl;
     }
+
+    timeused = std::chrono::high_resolution_clock::now() - staTime;
+    logEvolution << fixed << setprecision(2) << very_best_score << "," << get_evals() << "," << timeused.count() << endl;
 
     return very_best;
 }
