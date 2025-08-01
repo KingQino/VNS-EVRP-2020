@@ -141,7 +141,7 @@ ms_vns(bool merge, bool firstImprove, int p, double restart_ratio, vector<Funptr
     double very_best_score;
     // cout << "vns_restarts: " << vns_restarts << endl;
 
-    long timeused = 0; // Yinghao
+    std::chrono::duration<double> timeused = std::chrono::duration<double>::zero(); // Yinghao
 
     // Outer loop
     while (get_evals() < STOP_CNT) {
@@ -183,9 +183,8 @@ ms_vns(bool merge, bool firstImprove, int p, double restart_ratio, vector<Funptr
         }
 
 
-        endTime = std::chrono::high_resolution_clock::now();
-        timeused = std::chrono::duration_cast<std::chrono::seconds>(endTime - staTime).count();
-        logEvolution << fixed << setprecision(2) << very_best_score << "," << get_evals() << "," << timeused << endl;
+        timeused = std::chrono::high_resolution_clock::now() - staTime;
+        logEvolution << fixed << setprecision(2) << very_best_score << "," << get_evals() << "," << timeused.count() << endl;
     }
 
     return very_best;
