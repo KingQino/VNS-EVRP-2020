@@ -14,8 +14,6 @@
 
 using namespace std;
 
-int MAX_EXEC_TIME; // unit seconds
-
 char *problem_instance;          //Name of the instance
 struct node *node_list;     //List of nodes with id and x and y coordinates
 int *cust_demand;                //List with id and customer demands
@@ -195,13 +193,6 @@ void read_problem(char *filename) {
         exit(1);
     } else {
         compute_distances();
-        if (NUM_OF_CUSTOMERS <= 100) {
-            MAX_EXEC_TIME = 1 * ACTUAL_PROBLEM_SIZE * 36;
-        } else if (NUM_OF_CUSTOMERS <= 915) {
-            MAX_EXEC_TIME = 2 * ACTUAL_PROBLEM_SIZE * 36;
-        } else {
-            MAX_EXEC_TIME = 3 * ACTUAL_PROBLEM_SIZE * 36;
-        }
     }
 
 }

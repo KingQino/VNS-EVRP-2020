@@ -2,6 +2,7 @@
 /cmake-build-debug/
 .DS_Store
 
+/stats/
 CMakeLists.txt.user
 CMakeCache.txt
 CMakeFiles
