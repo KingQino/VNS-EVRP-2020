@@ -87,7 +87,7 @@ double **generate_2D_matrix_double(int n, int m) {
 /* Read the problem instance and generate the initial object    */
 /* vector.                                                      */
 /****************************************************************/
-void read_problem(char *filename) {
+void read_problem(const char *filename) {
     int i;
     char line[CHAR_LEN];
     char *keywords;

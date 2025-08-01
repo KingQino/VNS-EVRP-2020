@@ -9,8 +9,7 @@ mkdir build
 cd build
 cmake ..
 make 
-cd ../data
-../build/EVRP E-n22-k4.evrp
+./VNS-David E-n22-k4.evrp 1
 ```
 
 

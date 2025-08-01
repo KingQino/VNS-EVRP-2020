@@ -56,8 +56,11 @@ int main(int argc, char *argv[]) {
     std::string instanceName(argv[1]);
     run = std::stoi(argv[2]);
 
+    std::string data_dir = "../data/";
+    std::string instance = argv[1];  // 原始文件名
+    std::string full_path = data_dir + instance;
     problem_instance = argv[1];       //pass the .evrp filename as an argument
-    read_problem(problem_instance);   //Read EVRP from file from EVRP.h
+    read_problem(full_path.c_str());   //Read EVRP from file from EVRP.h
 
 
     string instancePrefix = instanceName.substr(0, instanceName.find_last_of('.'));
