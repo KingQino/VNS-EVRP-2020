@@ -3,6 +3,19 @@
 This repository contains the Variable Neighborhood Search metaheuristic algorithm for the Electric Vehicle Routing Problem (EVRP), the winning method of the IEEE WCCI 2020 competition on EVRP. 
 The code is as submitted to the competition. 
 
+## Source
+
+This project is also associated with the following paper:
+
+```bibtex
+@article{woller2025variable,
+  title={Variable Neighborhood Search for the Electric Vehicle Routing Problem},
+  author={Woller, David and Koz{\'a}k, Viktor and Kulich, Miroslav and P{\v{r}}eu{\v{c}}il, Libor},
+  journal={arXiv preprint arXiv:2511.09570},
+  year={2025}
+}
+```
+
 ## Build
 
 ```sh
