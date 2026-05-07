@@ -11,8 +11,6 @@
 #define TERMINATION 25000*ACTUAL_PROBLEM_SIZE  	//DO NOT CHANGE THE NUMBER
 #define STOP_CNT 25000*ACTUAL_PROBLEM_SIZE - 5
 
-extern int MAX_EXEC_TIME; // Yinghao
-
 using namespace std;
 
 extern char* problem_instance;          //Name of the instance
@@ -44,7 +42,7 @@ extern floydWarshall fw;
 double fitness_evaluation(int *routes, int size);		//evaluates an EVRP solution
 void print_solution(int *routes, int size); 				//used to print the solution
 bool check_solution(int *routes, int size); 				//used to validate the solution
-void read_problem(char* filename);					//reads .evrp file 
+void read_problem(const char* filename);					//reads .evrp file
 double get_energy_consumption(int from, int to);	//returns the energy consumption 
 int get_customer_demand(int customer);				//returns the customer demand
 double get_distance(int from, int to);				//returns the distance

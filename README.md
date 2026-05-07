@@ -9,10 +9,16 @@ mkdir build
 cd build
 cmake ..
 make 
-cd ../data
-../build/EVRP E-n22-k4.evrp
+./VNS-David E-n22-k4.evrp 1
 ```
 
 
 
 > The main changes made by me is on statistical function!
+>
+> Plz run the broker branch.
+
+```sh
+git clone -b broker git@github.com:KingQino/VNS-EVRP-2020.git 
+```
+

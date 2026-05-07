@@ -40,14 +40,14 @@ void initialize_heuristic(){
     string instancePrefix = instanceName.substr(0, instanceName.find_last_of('.'));
     string directoryPath = StatsInterface::statsPath+ "/" + instancePrefix  + "/" + to_string(SEED);
     StatsInterface::create_directories_if_not_exists(directoryPath);
-    string evFileName = "evolution." + to_string(SEED) + "." + instancePrefix  + ".csv";
+    string evFileName = "evols." + instancePrefix  + ".csv";
     logEvolution.open(directoryPath + "/" + evFileName);
-    logEvolution << "best" << "," << "global_best" << "," << "duration" << "," << "evals" << endl;
+    logEvolution << "obj" << "," << "evals" << "," << "time" << endl;
 
 //    fprintf(log_evolution_details, "iterations,vns_cnt,current_best,global_best,evaluations,progress,duration\n");
 
     // open solution log
-    string soFileName = "solution." + to_string(SEED) + "." + instancePrefix + ".txt";
+    string soFileName = "solution." + instancePrefix + ".txt";
     logSolution.open(directoryPath + "/" + soFileName);
 
     staTime = std::chrono::high_resolution_clock::now();
@@ -141,11 +141,10 @@ ms_vns(bool merge, bool firstImprove, int p, double restart_ratio, vector<Funptr
     double very_best_score;
     // cout << "vns_restarts: " << vns_restarts << endl;
 
-    long timeused = 0; // Yinghao
+    std::chrono::duration<double> timeused = std::chrono::duration<double>::zero(); // Yinghao
 
     // Outer loop
-    while (timeused < MAX_EXEC_TIME) {
-//    while (get_evals() < STOP_CNT) {
+    while (get_evals() < STOP_CNT) {
         auto best = construction();
 
         double best_score = fitness_evaluation(best);
@@ -155,22 +154,26 @@ ms_vns(bool merge, bool firstImprove, int p, double restart_ratio, vector<Funptr
         }
 
         // Attempt at most vns_restarts iters. of VNS
-        while (vns_cnt < 20*n && (double)timeused < (MAX_EXEC_TIME * 0.05)) {
-//        while (vns_cnt < vns_restarts && get_evals() < STOP_CNT) {
+        while (vns_cnt < vns_restarts && get_evals() < STOP_CNT) {
             auto current = best;
             generalizedDoubleBridge(current, p);
             localSearch(current, merge, firstImprove, neighborhoods);
             double current_score = fitness_evaluation(current);
 
-            double a = get_evals();
-            double b = TERMINATION;
-            cout << "Non-improving VNS cnt: " << vns_cnt << ", current: " << current_score << ", best: " << best_score << ", very best: " << very_best_score << ", progress: " << a/b << endl;
+            // double a = get_evals();
+            // double b = TERMINATION;
+            // cout << "Non-improving VNS cnt: " << vns_cnt << ", current: " << current_score << ", best: " << best_score << ", very best: " << very_best_score << ", progress: " << a/b << endl;
 
 
             if (current_score < best_score) {
                 vns_cnt = 0;
                 best = current;
                 best_score = current_score;
+                if (best_score < very_best_score) {
+                    very_best_score = best_score;
+                    timeused = std::chrono::high_resolution_clock::now() - staTime;
+                    logEvolution << fixed << setprecision(2) << very_best_score << "," << get_evals() << "," << timeused.count() << endl;
+                }
             } else {
                 vns_cnt++;
             }
@@ -185,10 +188,12 @@ ms_vns(bool merge, bool firstImprove, int p, double restart_ratio, vector<Funptr
         }
 
 
-        endTime = std::chrono::high_resolution_clock::now();
-        timeused = std::chrono::duration_cast<std::chrono::seconds>(endTime - staTime).count();
-        logEvolution << best_score << "," << very_best_score << "," << timeused << "," << get_evals() << endl;
+        timeused = std::chrono::high_resolution_clock::now() - staTime;
+        logEvolution << fixed << setprecision(2) << very_best_score << "," << get_evals() << "," << timeused.count() << endl;
     }
+
+    timeused = std::chrono::high_resolution_clock::now() - staTime;
+    logEvolution << fixed << setprecision(2) << very_best_score << "," << get_evals() << "," << timeused.count() << endl;
 
     return very_best;
 }
