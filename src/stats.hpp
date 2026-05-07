@@ -7,7 +7,7 @@
 #include <sstream>
 #include <fstream>
 
-#define MAX_TRIALS 	20 									//DO NOT CHANGE THE NUMBER
+#define MAX_TRIALS 	10 									//Default batch size: seeds 1..10
 #define CHAR_LEN 100
 
 void open_stats(void);									//creates the output file

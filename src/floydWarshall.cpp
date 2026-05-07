@@ -13,7 +13,7 @@ using namespace std;
  */
 floydWarshall::floydWarshall(int nV) : nV(nV) {
     next = vector<vector<int>>(nV, vector<int>(nV, -1));
-    dist = vector<vector<int>>(nV, vector<int>(nV, INF));
+    dist = vector<vector<double>>(nV, vector<double>(nV, INF));
     for (int i = 0; i < nV; i++) {
         for (int j = i; j < nV; j++) {
             if (i == j) {
@@ -38,9 +38,8 @@ floydWarshall::floydWarshall(int nV) : nV(nV) {
 /*
  * This constructor can be used for initialization by any graph.
  */
-floydWarshall::floydWarshall(vector<vector<int>> &graph) : dist(graph) {
+floydWarshall::floydWarshall(const vector<vector<double>> &graph) : nV(static_cast<int>(graph.size())), dist(graph) {
     next = vector<vector<int>>(nV, vector<int>(nV, -1));
-    nV = graph.size();
     for (int i = 0; i < nV; i++) {
         for (int j = 0; j < nV; j++) {
             next[i][j] = j;
@@ -65,7 +64,7 @@ void floydWarshall::planPaths() {
     }
 }
 
-void floydWarshall::printMatrix(vector<vector<int>> &matrix) {
+void floydWarshall::printMatrix(const vector<vector<double>> &matrix) {
     for (auto i = 0; i < nV; i++) {
         for (auto j = 0; j < nV; j++) {
             cout << matrix[i][j] << " ";

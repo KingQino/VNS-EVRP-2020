@@ -16,7 +16,7 @@ using namespace std;
 
 FILE *log_performance;
 //output files
-char *perf_filename;
+std::string perf_filename;
 
 double* perf_of_trials;
 
@@ -28,14 +28,14 @@ void open_stats(void){
         perf_of_trials[i] = 0.0;
     }
 
-
-  //initialize and open output files
-  perf_filename = new char[CHAR_LEN];
-  sprintf(perf_filename, "stats.%s.txt",
-	 problem_instance);
+  const fs::path problem_path(problem_instance);
+  const string problem_name = problem_path.stem().string();
+  const string stats_directory = StatsInterface::statsPath + "/" + problem_name;
+  StatsInterface::create_directories_if_not_exists(stats_directory);
+  perf_filename = stats_directory + "/stats." + problem_name + ".txt";
 
   //for performance
-  if ((log_performance = fopen(perf_filename,"a")) == NULL) {
+  if ((log_performance = fopen(perf_filename.c_str(),"w")) == NULL) {
       std::cout << "Failed to open stats file " << perf_filename << std::endl;
       exit(2);
   }
@@ -103,7 +103,7 @@ double worst_of_vector(double *values, int l ) {
 
 
 void close_stats(void){
-  int i,j;
+  int i;
   double perf_mean_value, perf_stdev_value;
  
   //For statistics
@@ -117,12 +117,12 @@ void close_stats(void){
 
   perf_mean_value = mean(perf_of_trials,MAX_TRIALS);
   perf_stdev_value = stdev(perf_of_trials,MAX_TRIALS,perf_mean_value);
-  fprintf(log_performance,"Mean %f\t ",perf_mean_value);
-  fprintf(log_performance,"\tStd Dev %f\t ",perf_stdev_value);
+  fprintf(log_performance,"Mean %.2f\t ",perf_mean_value);
+  fprintf(log_performance,"\tStd Dev %.2f\t ",perf_stdev_value);
   fprintf(log_performance,"\n");
-  fprintf(log_performance, "Min: %f\t ", best_of_vector(perf_of_trials,MAX_TRIALS));
+  fprintf(log_performance, "Min: %.2f\t ", best_of_vector(perf_of_trials,MAX_TRIALS));
   fprintf(log_performance,"\n");
-  fprintf(log_performance, "Max: %f\t ", worst_of_vector(perf_of_trials,MAX_TRIALS));
+  fprintf(log_performance, "Max: %.2f\t ", worst_of_vector(perf_of_trials,MAX_TRIALS));
   fprintf(log_performance,"\n");
 
 
@@ -139,7 +139,7 @@ void free_stats(){
 
 }
 
-const std::string StatsInterface::statsPath = "../stats";
+const std::string StatsInterface::statsPath = "../stats/VNS";
 
 PopulationMetrics StatsInterface::calculate_population_metrics(const std::vector<double> &data) {
     PopulationMetrics metrics;

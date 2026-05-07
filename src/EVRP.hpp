@@ -31,7 +31,7 @@ extern int NUM_OF_STATIONS;	            //number of charging stations
 extern int MAX_CAPACITY;				//maxmimum cargo capacity
 extern int DEPOT;						//id of the depot
 extern double OPTIMUM;                  //Global optimum (or upper bound) of the problem instance (if known)
-extern int BATTERY_CAPACITY;			//maximum energy level
+extern double BATTERY_CAPACITY;			//maximum energy level
 
 extern vector<int> CUSTOMERS;           // vector of customers
 extern vector<int> AFSs;                // vector of AFSs, including the depot
@@ -58,5 +58,4 @@ bool full_validity_check(vector<int> &tour);
 double get_energy_per_unit();
 
 #endif //EVRP_EVRP_HPP
-
 
